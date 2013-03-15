@@ -1,11 +1,19 @@
 public class SEntry {
 
-    public int x;
-    public int y;
+    public int primary;
+    public int secondary;
 
-    public SEntry(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public SEntry(int primary, int secondary) {
+        this.primary = primary;
+        this.secondary = secondary;
+    }
+
+    public int getPrimary() {
+        return primary;
+    }
+
+    public int getSecondary() {
+        return secondary;
     }
 }
 

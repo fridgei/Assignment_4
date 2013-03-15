@@ -1,8 +1,8 @@
-public class REntry {
+public class UEntry {
 
     public int primary;
 
-    public REntry(int primary) {
+    public UEntry(int primary) {
         this.primary = primary;
     }
 
