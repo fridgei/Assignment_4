@@ -1,5 +1,9 @@
 *.py[cod]
 
+# Java Extension
+*.class
+
+
 # C extensions
 *.so
 
