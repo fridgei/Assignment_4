@@ -16,14 +16,14 @@ public class Dbs {
     private String indexedDb = "S";
     private String unindexedDb1 = "R";
     private String unindexedDb2 = "U";
-    private SEntryBinding indexedBinding = null;
-    private OtherBinding unindexedbinding = null;
+    private IndexedBinding indexedBinding = null;
+    private UnindexedBinding unindexedbinding = null;
  
     public Dbs() {}
 
     public void setup(String dbNames) throws DatabaseException {
         indexedDb = new SEntryBinding();
-        unindexedBinding = new Unindxedbinding();
+        unindexedBinding = new UnindxedBinding();
 
         DatabaseConfig SConfig = new DatabaseConfig();
         DatabaseConfig RConfig = new DatabaseConfig();
