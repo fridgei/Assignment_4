@@ -143,7 +143,7 @@ public class Main {
             RPrimary = new File(args[2]);
             TPrimary = new File(args[2]);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Usage: <TY.dat> <SY.dat> <RX.dat> <SX.dat>");
+            System.out.println("Usage: <TY.dat> <SY.dat> <SX.dat> <RX.dat>");
             System.exit(1);
         }
         IndexedInsertionThread primaryIdx = new IndexedInsertionThread(dbs.getPrimaryDB(), SPrimary, SSecondary);
