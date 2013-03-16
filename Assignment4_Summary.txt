@@ -11,3 +11,49 @@ sorted at run time to improve the performance of the join between it and the
 intermediate relation. Our custom iterator determines whether it is operating
 on an indexed relation which makes our solution extremely generic.
 
+For our execution plan we determined the number of total and distinct number
+or values for each of the relations.  We found that the S relation had the
+greatest number of distinct values with 10000 unique values and 125000 total.
+The RY relation had 2000 total values and 1807 unique making it the relation
+which should be first joined with SY.  The size of this join was calculated
+as (125000*2000)/(10000*1807).  This relation was then joined with the TX
+relation whcih had 965 unique elements of the total 1000.  All of these were
+contained in the results of the previous join.
+
+One of the problems with this assignment was that the SY and SX relationships
+were the same which created a problem with insertion.  BTREEs in Berkley DB do
+not support multiple entries with the same primary key and the same data
+entry.  So not only did we have multiple entries with the same primary key
+they also had the same data so the repeated values were ignored meaning that
+the S database contaiend 10000 records.  Similarly the R table contained the
+unique 1807 entries since there was no data it was just they key and then the
+data which is the same as the key.  For the T relationship this was also the
+case.
+
+The restuling table after the joins was 956 elementsm, all of which were
+contained in TY.  We tested this by writting a simple python script which took
+the intersection between the unique items in contained in all of the files.
+The query execution planning was only partially implemented.  When we
+calculated it by hand we found that the algorithm should have first joined the
+SX and RX relation and then joined SY and TY and finally joined those
+resulting intermediary relations.  We attempted to debug this issues but were
+unsuccesful.  Despite this it did get the correct result however not by using
+the optimal query execution plan.
+
+We were significantly delayed during the development of our program as we
+spent a great deal of time trying to debug the fact that the duplicate values
+were not being inserted correctly.  This cost us many additional hours of work
+which were spent spinning our wheels.  Once we solved this we were very
+much behind schedule.  I think another mistake that we made was attempting to
+write our solution in too general of a manner.  We tried to make sure that the
+query execution planning algorithm tried to find to compute tables
+intelligently by allowing relations to have any number of columns.
+
+We tried to group the files by the first value in their filename as, the relation name,
+and the second value as the column name.  We then tried to create wrappers
+around these relations and find all the valid combinations between relations
+based on sharing columns.  We then tried to compute the cost between each pair
+of relations.  This part worked correctly but we ran into difficulties when we
+tried to calculate cost for joining intermediary relations.  It worked in some
+cases but we had bugs in our code which prevented us from finishign the
+algorithm.
