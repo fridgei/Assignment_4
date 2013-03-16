@@ -147,5 +147,8 @@ public class Main {
     }
     public static void main(String[] args) {
         Main.populateDb();
+        Main.Join();
+    }
+    public static void joinDb(Database left, Database right) {
     }
 }
