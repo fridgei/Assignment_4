@@ -18,7 +18,7 @@ public class Relation implements Iterator {
     OperationStatus ret;
     DatabaseEntry currentEntry = new DatabaseEntry();
     DatabaseEntry currentKey = new DatabaseEntry();
-    ArrayList<SEntry> internalList;
+    SEntry[] internalArray;
     IndexedEntryBinding iBinding = new IndexedEntryBinding();
     UnindexedBinding unBinding = new UnindexedBinding();
 
@@ -26,8 +26,8 @@ public class Relation implements Iterator {
         this.db = db;
     }
 
-    public Relation(ArrayList<SEntry> initial){
-        this.internalList = initial;
+    public Relation(SEntry[] initial){
+        this.internalArray = initial;
         this.isIntermediate = true;
     }
 
@@ -37,28 +37,42 @@ public class Relation implements Iterator {
         this.db = db;
         this.isIndex = isIndex;
         if(!this.isIndex) {
-            this.relCursor = this.db.openCursor(null, null);
-            this.relCursor.getFirst(this.currentKey, this.currentEntry, LockMode.DEFAULT);
+            try {
+                this.relCursor = this.db.openCursor(null, null);
+                this.relCursor.getFirst(this.currentKey, this.currentEntry, LockMode.DEFAULT);
+            } catch (DatabaseException e) {
+                System.out.println("Set cursor failed in Constructor");
+                e.printStackTrace();
+            }
+            ArrayList<SEntry> internalList = new ArrayList<SEntry>();
             while(true) {
-                if(this.relCursor == null) {
-                    this.setCursor();
-                }
+                try {
+                    if(this.relCursor == null) {
+                        this.setCursor();
+                    }
 
-                this.ret = this.relCursor.getNextDup(
-                    this.currentKey, this.currentEntry, LockMode.DEFAULT
-                );
-
-                if(this.ret != OperationStatus.SUCCESS) {
-                    this.ret = this.relCursor.getNext(
+                    this.ret = this.relCursor.getNextDup(
                         this.currentKey, this.currentEntry, LockMode.DEFAULT
                     );
+
                     if(this.ret != OperationStatus.SUCCESS) {
-                        break;
+                        this.ret = this.relCursor.getNext(
+                            this.currentKey, this.currentEntry, LockMode.DEFAULT
+                        );
+                        if(this.ret != OperationStatus.SUCCESS) {
+                            break;
+                        }
                     }
+                    internalList.add((SEntry) unBinding.entryToObject(this.currentEntry));
+                } catch (DatabaseException e) {
+                    System.out.println("Constructor issues and stuff");
+                    e.printStackTrace();
                 }
-                this.internalList.add((SEntry) unBinding.entryToObject(this.currentEntry));
             }
+            this.internalArray = internalList.toArray(new SEntry[internalList.size()]);
+            Arrays.sort(this.internalArray);
             this.isIntermediate = true;
+            System.out.println("Size is: " + this.internalArray.length);
         } else {
             this.isIntermediate = isIntermediate;
         }
@@ -79,7 +93,7 @@ public class Relation implements Iterator {
     }
 
     public boolean hasNext() {
-        System.out.println("In hasNext");
+        //System.out.println("In hasNext");
         try {
             if(this.isIndex) {
                 if(this.relCursor == null) {
@@ -101,8 +115,8 @@ public class Relation implements Iterator {
                 return true;
 
             } else if(this.isIntermediate) {
-                System.out.println("Here?");
-                if(this.listIndex < this.internalList.size()) {
+                //System.out.println("Here?");
+                if(this.listIndex < this.internalArray.length) {
                     return true;
                 }
             }
@@ -117,7 +131,7 @@ public class Relation implements Iterator {
         if(this.isIndex) {
             return (SEntry) iBinding.entryToObject(this.currentEntry);
         } else if (this.isIntermediate) {
-            return this.internalList.get(this.listIndex++);
+            return this.internalArray[this.listIndex++];
         }
         return (SEntry) this.unBinding.entryToObject(this.currentEntry);
     }
@@ -129,6 +143,14 @@ public class Relation implements Iterator {
         while(true) {
             if(c1.compareTo(c2) == 0) {
                 results.add(c1);
+                if(!this.hasNext()){
+                    break;
+                }
+                if(!other.hasNext()) {
+                    break;
+                }
+                c1 = (SEntry) this.next();
+                c2 = (SEntry) other.next();
             } else if (c1.compareTo(c2) < 0) {
                 if(this.hasNext()){
                     c1 = (SEntry) this.next();
@@ -143,7 +165,7 @@ public class Relation implements Iterator {
                 }
             }
         }
-        Relation r = new Relation(results);
+        Relation r = new Relation(results.toArray(new SEntry[results.size()]));
         return r;
     }
 

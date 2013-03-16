@@ -75,7 +75,7 @@ class IndexedInsertionThread extends Thread {
 class UnindexedInsertionThread extends Thread {
     Database db;
     File path;
-    UnindexedBinding binding = new UnindexedBinding();
+    IndexedEntryBinding binding = new IndexedEntryBinding();
 
     public UnindexedInsertionThread(Database db, File path) {
         this.db = db;
@@ -97,13 +97,16 @@ class UnindexedInsertionThread extends Thread {
 
         DatabaseEntry key = new DatabaseEntry();
         DatabaseEntry data = new DatabaseEntry();
-        SEntry e;
+        SEntry s;
         try{
             while((primary = primarybr.readLine()) != null) {
                 primary = primary.trim();
-                e = new SEntry(Integer.parseInt(primary));
+                int secondary = 0;
+                s = new SEntry(Integer.parseInt(primary), secondary);
+                binding.objectToEntry(s, data);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
-                IntegerBinding.intToEntry(Integer.parseInt(primary), data);
+                //System.out.println(primary);
+                // GET THIS THIGNS NAME
                 this.db.put(null, key, data);
             }
         } catch (DatabaseException error) {
@@ -154,16 +157,28 @@ public class Main {
 
         while (r.hasNext()) {
             de = (SEntry) r.next();
-            System.out.print(de.getValue());
+            System.out.println(de.getValue());
         }
         */
-
+        /*
         Relation r = new Relation(dbs.getUDB(), false, false);
         SEntry de = null;
 
         while (r.hasNext()) {
             de = (SEntry) r.next();
-            System.out.print(de.getValue());
+            System.out.println(de.getValue());
+        }
+        */
+        Relation rS = new Relation(dbs.getPrimaryDB(), true, false);
+        Relation rU = new Relation(dbs.getUDB(), false, false);
+        rS.hasNext();
+        rU.hasNext();
+        Relation rIntermediate = rS.join(rU);
+
+        Relation rR = new Relation(dbs.getRDB(), false, false);
+        Relation result = rIntermediate.join(rR);
+        for (int i = 0; i < result.internalArray.length; i++ ) {
+            System.out.println(result.internalArray[i].primary);
         }
     }
 }

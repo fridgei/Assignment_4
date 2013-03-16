@@ -1,4 +1,4 @@
-public class SEntry {
+public class SEntry implements Comparable {
 
     public int primary;
     public int secondary;
