@@ -18,7 +18,7 @@ public class Relation implements Iterator {
     OperationStatus ret;
     DatabaseEntry currentEntry = new DatabaseEntry();
     DatabaseEntry currentKey = new DatabaseEntry();
-    ArrayList<BaseEntry> internalList;
+    ArrayList<SEntry> internalList;
     IndexedEntryBinding iBinding = new IndexedEntryBinding();
     UnindexedBinding unBinding = new UnindexedBinding();
 
@@ -26,7 +26,7 @@ public class Relation implements Iterator {
         this.db = db;
     }
 
-    public Relation(ArrayList<BaseEntry> initial){
+    public Relation(ArrayList<SEntry> initial){
         this.internalList = initial;
         this.isIntermediate = true;
     }
@@ -88,31 +88,31 @@ public class Relation implements Iterator {
         return false;
     }
 
-    public BaseEntry next() {
+    public SEntry next() {
         if(this.isIndex) {
-            return (BaseEntry) iBinding.entryToObject(this.currentEntry);
+            return (SEntry) iBinding.entryToObject(this.currentEntry);
         } else if (this.isIntermediate) {
             return this.internalList.get(this.listIndex++);
         }
-        return (BaseEntry) this.unBinding.entryToObject(this.currentEntry);
+        return (SEntry) this.unBinding.entryToObject(this.currentEntry);
     }
 
     public Relation join(Relation other) {
-        BaseEntry c1 = (BaseEntry) this.next();
-        BaseEntry c2 = (BaseEntry) other.next();
-        ArrayList<BaseEntry> results = new ArrayList<BaseEntry>();
+        SEntry c1 = (SEntry) this.next();
+        SEntry c2 = (SEntry) other.next();
+        ArrayList<SEntry> results = new ArrayList<SEntry>();
         while(true) {
             if(c1.compareTo(c2) == 0) {
                 results.add(c1);
             } else if (c1.compareTo(c2) < 0) {
                 if(this.hasNext()){
-                    c1 = (BaseEntry) this.next();
+                    c1 = (SEntry) this.next();
                 } else {
                     break;
                 }
             } else {
                 if(other.hasNext()) {
-                    c2 = (BaseEntry) other.next();
+                    c2 = (SEntry) other.next();
                 } else {
                     break;
                 }

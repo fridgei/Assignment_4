@@ -1,4 +1,4 @@
-public class SEntry extends BaseEntry {
+public class SEntry {
 
     public int primary;
     public int secondary;
@@ -8,8 +8,26 @@ public class SEntry extends BaseEntry {
         this.secondary = secondary;
     }
 
+    public SEntry(int primary) {
+        this.primary = primary;
+        this.secondary = 0;
+    }
+
     public int getSecondary() {
         return secondary;
+    }
+
+    public int getPrimary() {
+        return primary;
+    }
+
+    public int getValue() {
+        return primary;
+    }
+
+    public int compareTo(Object o) {
+        SEntry be = (SEntry) o;
+        return this.getValue() - be.getValue();
     }
 
 }

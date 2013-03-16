@@ -97,11 +97,11 @@ class UnindexedInsertionThread extends Thread {
 
         DatabaseEntry key = new DatabaseEntry();
         DatabaseEntry data = new DatabaseEntry();
-        Entry e;
+        SEntry e;
         try{
             while((primary = primarybr.readLine()) != null) {
                 primary = primary.trim();
-                e = new Entry(Integer.parseInt(primary));
+                e = new SEntry(Integer.parseInt(primary));
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), data);
                 this.db.put(null, key, data);
@@ -148,11 +148,21 @@ public class Main {
 
     public static void main(String[] args) {
         Main.populateDb();
+        /*
         Relation r = new Relation(dbs.getPrimaryDB(), true, false);
-        BaseEntry de = null;
+        SEntry de = null;
 
         while (r.hasNext()) {
-            de = (BaseEntry) r.next();
+            de = (SEntry) r.next();
+            System.out.print(de.getValue());
+        }
+        */
+
+        Relation r = new Relation(dbs.getUDB(), false, false);
+        SEntry de = null;
+
+        while (r.hasNext()) {
+            de = (SEntry) r.next();
             System.out.print(de.getValue());
         }
     }
