@@ -16,45 +16,42 @@ public class Dbs {
     private String indexedDb = "S";
     private String unindexedDb1 = "R";
     private String unindexedDb2 = "U";
-    private IndexedBinding indexedBinding = null;
+    private IndexedEntryBinding indexedBinding = null;
     private UnindexedBinding unindexedbinding = null;
- 
+
     public Dbs() {}
 
     public void setup(String dbNames) throws DatabaseException {
-        indexedDb = new SEntryBinding();
-        unindexedBinding = new UnindxedBinding();
+        indexedBinding = new IndexedEntryBinding();
+        unindexedbinding = new UnindexedBinding();
+        IndexComparator indexCmp = new IndexComparator();
 
         DatabaseConfig SConfig = new DatabaseConfig();
         DatabaseConfig RConfig = new DatabaseConfig();
         DatabaseConfig UConfig = new DatabaseConfig();
-       
 
- 
         SConfig.setErrorStream(System.err);
         SConfig.setErrorPrefix(indexedDb);
         SConfig.setType(DatabaseType.BTREE);
         SConfig.setAllowCreate(true);
         SConfig.setTransactional(false);
-        SConfig.setCacheSize(1000000);
+        //SConfig.setCacheSize(1000000);
 		SConfig.setBtreeComparator(indexCmp);
 
         UConfig.setErrorStream(System.err);
         UConfig.setErrorPrefix(unindexedDb1);
-        UConfig.setType(DatabaseType.HASH);
-        UConfig.setAllowPopulate(true); 
+        UConfig.setType(DatabaseType.HEAP);
         UConfig.setAllowCreate(true);
         UConfig.setTransactional(false);
-        UConfig.setCacheSize(1000000);
-		UConfig.setBtreeComparator(indexCmp);
+        //UConfig.setCacheSize(1000000);
+		//UConfig.setBtreeComparator(indexCmp);
 
         RConfig.setErrorStream(System.err);
         RConfig.setErrorPrefix(unindexedDb2);
-        RConfig.setType(DatabaseType.HASH);
-        RConfig.setAllowPopulate(true); 
+        RConfig.setType(DatabaseType.HEAP);
         RConfig.setAllowCreate(true);
         RConfig.setTransactional(false);
-        RConfig.setCacheSize(1000000);
+        //RConfig.setCacheSize(1000000);
 
 
         try {
@@ -81,15 +78,15 @@ public class Dbs {
 		}
     }
 
-    public Database getIndexedDb() {
+    public Database getPrimaryDB() {
         return S;
     }
 
-    public Database getRDb() {
+    public Database getRDB() {
         return R;
     }
 
-    public Database getUDb() {
+    public Database getUDB() {
         return U;
     }
 
@@ -98,13 +95,12 @@ public class Dbs {
             if (S != null) {
                 S.close();
             }
-			if (R != null) { 
+			if (R != null) {
 				R.close();
-			}	
+            }
             if (U != null) {
                 U.close();
             }
-
         } catch(DatabaseException dbe) {
             System.err.println("Error closing Databases: " + dbe.toString());
             System.exit(-1);
