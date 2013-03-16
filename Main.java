@@ -125,6 +125,8 @@ public class Main {
     public static Dbs dbs = new Dbs();
     public static void populateDb(String[] args) {
         try {
+            File dir = new File("./db_dir/");
+            dir.mkdir();
             dbs.setup("./db_dir/");
         } catch (DatabaseException e) {
             System.err.println("Databases weren't created right");
