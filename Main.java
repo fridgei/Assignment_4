@@ -41,6 +41,8 @@ class IndexedInsertionThread extends Thread {
             primarybr = new BufferedReader(new FileReader(this.primaryPath));
             secondarybr = new BufferedReader(new FileReader(this.secondaryPath));
         } catch (FileNotFoundException e) {
+            System.err.println("Couldn't open primaryPath or secondaryPath in IndexedInsertionThread run()");
+            e.printStackTrace();
         }
         DatabaseEntry key = new DatabaseEntry();
         DatabaseEntry data = new DatabaseEntry();
@@ -57,7 +59,9 @@ class IndexedInsertionThread extends Thread {
         } catch (DatabaseException e) {
             System.err.println("You fucked up entering in the priamry index");
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            System.err.println("IOException in ");
+            e.printStackTrace();
         } catch (NullPointerException npe) {
             System.err.println("You had a null pointer exception in primary index insertion");
             npe.printStackTrace();
@@ -81,7 +85,12 @@ class UnindexedInsertionThread extends Thread {
         try {
             primarybr = new BufferedReader(new FileReader(this.path));
         } catch (FileNotFoundException fnf) {
-        } catch (IOException ioe) {}
+            System.err.println("Couldn't open Unindexed file index in UnindexedInsertionThread run()");
+            fnf.printStackTrace();
+        } catch (IOException ioe) {
+            System.err.println("IOException in UnindexedInsertionThread run()");
+            ioe.printStackTrace();
+        }
 
         DatabaseEntry key = new DatabaseEntry();
         DatabaseEntry data = new DatabaseEntry();
@@ -99,7 +108,9 @@ class UnindexedInsertionThread extends Thread {
         } catch (NullPointerException npe) {
             System.err.println("You had a null pointer exception in primary index insertion");
             npe.printStackTrace();
-        } catch (IOException ioe) {}
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 }
 
@@ -121,6 +132,7 @@ public class Main {
             RInsertion.join();
             TInsertion.join();
         } catch (InterruptedException inter) {
+            inter.printStackTrace();
         }
     }
 }
