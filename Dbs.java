@@ -58,7 +58,7 @@ public class Dbs {
             System.out.println("Database at: " + indexedDb);
             S = new Database(dbNames + "/" + indexedDb, null, SConfig);
         } catch(FileNotFoundException notFound) {
-            System.err.println(" WTF Databases: " + notFound.toString());
+            System.err.println("File not found when creating the S relation " + notFound.toString());
             notFound.printStackTrace();
             System.exit(-1);
         }
@@ -66,14 +66,14 @@ public class Dbs {
         try {
             R = new Database(dbNames + "/" + unindexedDb1, null, RConfig);
         } catch(FileNotFoundException e) {
-            System.err.println(" Error in Secondary creation : " + e.toString());
+            System.err.println("File not found when creatig the R relation: " + e.toString());
             e.printStackTrace();
         }
 
 		try {
             U = new Database(dbNames + "/" + unindexedDb2, null, UConfig);
 		} catch(FileNotFoundException e) {
-			System.err.println("Error in TextDB creation :" + e.toString());
+			System.err.println("File not found when creating the U relation" + e.toString());
 			e.printStackTrace();
 		}
     }
