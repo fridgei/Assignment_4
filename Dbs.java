@@ -40,7 +40,7 @@ public class Dbs {
 
         UConfig.setErrorStream(System.err);
         UConfig.setErrorPrefix(unindexedDb1);
-        UConfig.setType(DatabaseType.HEAP);
+        UConfig.setType(DatabaseType.HASH);
         UConfig.setAllowCreate(true);
         UConfig.setTransactional(false);
         //UConfig.setCacheSize(1000000);
@@ -48,7 +48,7 @@ public class Dbs {
 
         RConfig.setErrorStream(System.err);
         RConfig.setErrorPrefix(unindexedDb2);
-        RConfig.setType(DatabaseType.HEAP);
+        RConfig.setType(DatabaseType.HASH);
         RConfig.setAllowCreate(true);
         RConfig.setTransactional(false);
         //RConfig.setCacheSize(1000000);

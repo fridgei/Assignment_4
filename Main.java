@@ -49,7 +49,9 @@ class IndexedInsertionThread extends Thread {
         SEntry s;
         try{
             while((primary = primarybr.readLine()) != null) {
+                primary = primary.trim();
                 secondary = secondarybr.readLine();
+                secondary = secondary.trim();
                 s = new SEntry(Integer.parseInt(primary), Integer.parseInt(secondary));
                 binding.objectToEntry(s, data);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
@@ -57,7 +59,7 @@ class IndexedInsertionThread extends Thread {
                 this.db.put(null, key, data);
             }
         } catch (DatabaseException e) {
-            System.err.println("You fucked up entering in the priamry index");
+            System.err.println("Database exception on primary index insertion");
             e.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("IOException in ");
@@ -97,16 +99,18 @@ class UnindexedInsertionThread extends Thread {
         Entry e;
         try{
             while((primary = primarybr.readLine()) != null) {
+                primary = primary.trim();
                 e = new Entry(Integer.parseInt(primary));
+                System.out.println(primary);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), data);
                 this.db.put(null, key, data);
             }
         } catch (DatabaseException error) {
-            System.err.println("You fucked up entering in the priamry index");
+            System.err.println("Database exception on secondary index insertion");
             error.printStackTrace();
         } catch (NullPointerException npe) {
-            System.err.println("You had a null pointer exception in primary index insertion");
+            System.err.println("You had a null pointer exception in secondary index insertion");
             npe.printStackTrace();
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -115,24 +119,33 @@ class UnindexedInsertionThread extends Thread {
 }
 
 public class Main {
-    Dbs dbs = new Dbs();
-    public void populateDb() {
+    public static Dbs dbs = new Dbs();
+    public static void populateDb() {
         try {
             dbs.setup("./db_dir/");
-        } catch (DatabaseException e) {}
-        File SPrimary = new File("SX.dat");
-        File SSecondary = new File("SY.dat");
-        File RPrimary = new File("RX.dat");
-        File TPrimary = new File("TY.dat");
+        } catch (DatabaseException e) {
+            System.err.println("Databases weren't created right");
+            e.printStackTrace();
+        }
+        File SPrimary = new File("/scratch/CS440Assignment4/SX.dat");
+        File SSecondary = new File("/scratch/CS440Assignment4/SY.dat");
+        File RPrimary = new File("/scratch/CS440Assignment4/RX.dat");
+        File TPrimary = new File("/scratch/CS440Assignment4/TY.dat");
         IndexedInsertionThread primaryIdx = new IndexedInsertionThread(dbs.getPrimaryDB(), SPrimary, SSecondary);
         UnindexedInsertionThread RInsertion = new UnindexedInsertionThread(dbs.getRDB(), RPrimary);
         UnindexedInsertionThread TInsertion = new UnindexedInsertionThread(dbs.getUDB(), TPrimary);
         try {
+            primaryIdx.start();
+            RInsertion.start();
+            TInsertion.start();
             primaryIdx.join();
             RInsertion.join();
             TInsertion.join();
         } catch (InterruptedException inter) {
             inter.printStackTrace();
         }
+    }
+    public static void main(String[] args) {
+        Main.populateDb();
     }
 }
