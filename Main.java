@@ -55,6 +55,7 @@ class IndexedInsertionThread extends Thread {
                 s = new SEntry(Integer.parseInt(primary), Integer.parseInt(secondary));
                 binding.objectToEntry(s, data);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
+                //System.out.println(primary);
                 // GET THIS THIGNS NAME
                 this.db.put(null, key, data);
             }
@@ -101,7 +102,6 @@ class UnindexedInsertionThread extends Thread {
             while((primary = primarybr.readLine()) != null) {
                 primary = primary.trim();
                 e = new Entry(Integer.parseInt(primary));
-                System.out.println(primary);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), key);
                 IntegerBinding.intToEntry(Integer.parseInt(primary), data);
                 this.db.put(null, key, data);
@@ -147,8 +147,11 @@ public class Main {
     }
     public static void main(String[] args) {
         Main.populateDb();
-        Main.Join();
-    }
-    public static void joinDb(Database left, Database right) {
+        Relation r = new Relation(dbs.getPrimaryDB(), true, false);
+        DatabaseEntry de = null;
+
+        while (r.hasNext()) {
+            de = (DatabaseEntry) r.next();
+        }
     }
 }
