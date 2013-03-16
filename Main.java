@@ -145,6 +145,7 @@ public class Main {
             inter.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         Main.populateDb();
         Relation r = new Relation(dbs.getPrimaryDB(), true, false);

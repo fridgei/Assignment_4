@@ -19,7 +19,8 @@ public class Relation implements Iterator {
     DatabaseEntry currentEntry = new DatabaseEntry();
     DatabaseEntry currentKey = new DatabaseEntry();
     ArrayList<Object> internalList;
-
+    IndexedEntryBinding iBinding = new IndexedEntryBinding();
+    UnIndexedBinding unBinding = new UnIndexedBinding();
     public Relation(Database db) {
         this.db = db;
     }
@@ -83,10 +84,36 @@ public class Relation implements Iterator {
 
     public Object next() {
         if(this.isIndex) {
-            return this.currentEntry;
+            return iBinding.entryToObject(this.currentEntry);
+        } else if (this.isIntermediate) {
+            return this.internalList.get(this.listIndex++);
         }
-        return this.internalList.get(this.listIndex++);
+        return this.unBinding.entryToObject(this.currentEntry);
     }
+
+    public Relation join(Relation other) {
+        Object c1 = this.next();
+        Object c2 = other.next();
+        ArrayList<DatabaseEntry> results = new ArrayList<DatabaseEntry>();
+        while(true) {
+            if(c1 == c2) {
+                list.add(c1);
+            } else if (c1 < c2 ) {
+                if(this.hasNext()){ 
+                    c1 = this.next();
+                } else {
+                    break;
+                }
+            } else { 
+                if(other.hasNext()) { 
+                    c2 = other.next();
+                } else {
+                    break;
+                }
+            }
+        }
+
+
 
     public void remove() {
         throw new UnsupportedOperationException("Not Implemented");

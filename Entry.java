@@ -1,4 +1,4 @@
-public class Entry {
+public class Entry implements Comparable {
 
     public int primary;
 
@@ -8,5 +8,13 @@ public class Entry {
 
     public int getPrimary() {
         return primary;
+    }
+
+    public int getValue() {
+        return primary;
+    }
+
+    public int compareTo(Object o) {
+        return this.getValue() - o.getValue();
     }
 }
