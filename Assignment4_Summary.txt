@@ -1,0 +1,13 @@
+Eric Zounes, Ian Fridge, Jacques Uber
+03/15/13
+CS440
+Assignment 4 - Part 2
+
+For this assignment we developed an algorithm for joining multiple relations.
+We use a hash database to index the largest relation which we determine at run
+time. We create a generic entry object that can take a join attribute. The large
+relation is indexed on the join attribute. The other relations to be joined are
+sorted at run time to improve the performance of the join between it and the
+intermediate relation. Our custom iterator determines whether it is operating
+on an indexed relation which makes our solution extremely generic.
+
