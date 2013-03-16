@@ -1,4 +1,4 @@
-public class SEntry implements Comparable {
+public class SEntry extends BaseEntry {
 
     public int primary;
     public int secondary;
@@ -8,19 +8,8 @@ public class SEntry implements Comparable {
         this.secondary = secondary;
     }
 
-    public int getPrimary() {
-        return primary;
-    }
-
     public int getSecondary() {
         return secondary;
     }
 
-    public int getValue() {
-        return primary;
-    }
-
-    public int compareTo(Object o) {
-        return this.getValue() - o.getValue();
-    }
 }

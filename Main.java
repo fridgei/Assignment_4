@@ -149,10 +149,11 @@ public class Main {
     public static void main(String[] args) {
         Main.populateDb();
         Relation r = new Relation(dbs.getPrimaryDB(), true, false);
-        DatabaseEntry de = null;
+        BaseEntry de = null;
 
         while (r.hasNext()) {
-            de = (DatabaseEntry) r.next();
+            de = (BaseEntry) r.next();
+            System.out.print(de.getValue());
         }
     }
 }

@@ -18,11 +18,17 @@ public class Relation implements Iterator {
     OperationStatus ret;
     DatabaseEntry currentEntry = new DatabaseEntry();
     DatabaseEntry currentKey = new DatabaseEntry();
-    ArrayList<Object> internalList;
+    ArrayList<BaseEntry> internalList;
     IndexedEntryBinding iBinding = new IndexedEntryBinding();
-    UnIndexedBinding unBinding = new UnIndexedBinding();
+    UnindexedBinding unBinding = new UnindexedBinding();
+
     public Relation(Database db) {
         this.db = db;
+    }
+
+    public Relation(ArrayList<BaseEntry> initial){
+        this.internalList = initial;
+        this.isIntermediate = true;
     }
 
     public Relation(Database db, boolean isIndex, boolean isIntermediate) {
@@ -82,36 +88,39 @@ public class Relation implements Iterator {
         return false;
     }
 
-    public Object next() {
+    public BaseEntry next() {
         if(this.isIndex) {
-            return iBinding.entryToObject(this.currentEntry);
+            return (BaseEntry) iBinding.entryToObject(this.currentEntry);
         } else if (this.isIntermediate) {
             return this.internalList.get(this.listIndex++);
         }
-        return this.unBinding.entryToObject(this.currentEntry);
+        return (BaseEntry) this.unBinding.entryToObject(this.currentEntry);
     }
 
     public Relation join(Relation other) {
-        Object c1 = this.next();
-        Object c2 = other.next();
-        ArrayList<DatabaseEntry> results = new ArrayList<DatabaseEntry>();
+        BaseEntry c1 = (BaseEntry) this.next();
+        BaseEntry c2 = (BaseEntry) other.next();
+        ArrayList<BaseEntry> results = new ArrayList<BaseEntry>();
         while(true) {
-            if(c1 == c2) {
-                list.add(c1);
-            } else if (c1 < c2 ) {
-                if(this.hasNext()){ 
-                    c1 = this.next();
+            if(c1.compareTo(c2) == 0) {
+                results.add(c1);
+            } else if (c1.compareTo(c2) < 0) {
+                if(this.hasNext()){
+                    c1 = (BaseEntry) this.next();
                 } else {
                     break;
                 }
-            } else { 
-                if(other.hasNext()) { 
-                    c2 = other.next();
+            } else {
+                if(other.hasNext()) {
+                    c2 = (BaseEntry) other.next();
                 } else {
                     break;
                 }
             }
         }
+        Relation r = new Relation(results);
+        return r;
+    }
 
 
 

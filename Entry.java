@@ -1,20 +1,5 @@
-public class Entry implements Comparable {
-
-    public int primary;
-
+public abstract class Entry extends BaseEntry {
     public Entry(int primary) {
         this.primary = primary;
-    }
-
-    public int getPrimary() {
-        return primary;
-    }
-
-    public int getValue() {
-        return primary;
-    }
-
-    public int compareTo(Object o) {
-        return this.getValue() - o.getValue();
     }
 }
