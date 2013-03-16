@@ -123,17 +123,27 @@ class UnindexedInsertionThread extends Thread {
 
 public class Main {
     public static Dbs dbs = new Dbs();
-    public static void populateDb() {
+    public static void populateDb(String[] args) {
         try {
             dbs.setup("./db_dir/");
         } catch (DatabaseException e) {
             System.err.println("Databases weren't created right");
             e.printStackTrace();
+            return;
         }
-        File SPrimary = new File("/scratch/CS440Assignment4/SX.dat");
-        File SSecondary = new File("/scratch/CS440Assignment4/SY.dat");
-        File RPrimary = new File("/scratch/CS440Assignment4/RX.dat");
-        File TPrimary = new File("/scratch/CS440Assignment4/TY.dat");
+        File SPrimary = null;
+        File SSecondary = null;
+        File RPrimary = null;
+        File TPrimary = null;
+        try {
+            SPrimary = new File(args[0]);
+            SSecondary = new File(args[1]);
+            RPrimary = new File(args[2]);
+            TPrimary = new File(args[2]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Usage: <SX.dat> <SY.dat> <RX.dat> <TY.dat>");
+            System.exit(1);
+        }
         IndexedInsertionThread primaryIdx = new IndexedInsertionThread(dbs.getPrimaryDB(), SPrimary, SSecondary);
         UnindexedInsertionThread RInsertion = new UnindexedInsertionThread(dbs.getRDB(), RPrimary);
         UnindexedInsertionThread TInsertion = new UnindexedInsertionThread(dbs.getUDB(), TPrimary);
@@ -150,7 +160,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Main.populateDb();
+        Main.populateDb(args);
         /*
         Relation r = new Relation(dbs.getPrimaryDB(), true, false);
         SEntry de = null;
