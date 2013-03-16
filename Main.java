@@ -61,7 +61,7 @@ class IndexedInsertionThread extends Thread {
             e.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("IOException in ");
-            e.printStackTrace();
+            ioe.printStackTrace();
         } catch (NullPointerException npe) {
             System.err.println("You had a null pointer exception in primary index insertion");
             npe.printStackTrace();
