@@ -31,10 +31,37 @@ public class Relation implements Iterator {
         this.isIntermediate = true;
     }
 
+
+
     public Relation(Database db, boolean isIndex, boolean isIntermediate) {
         this.db = db;
         this.isIndex = isIndex;
-        this.isIntermediate = isIntermediate;
+        if(!this.isIndex) {
+            this.relCursor = this.db.openCursor(null, null);
+            this.relCursor.getFirst(this.currentKey, this.currentEntry, LockMode.DEFAULT);
+            while(true) {
+                if(this.relCursor == null) {
+                    this.setCursor();
+                }
+
+                this.ret = this.relCursor.getNextDup(
+                    this.currentKey, this.currentEntry, LockMode.DEFAULT
+                );
+
+                if(this.ret != OperationStatus.SUCCESS) {
+                    this.ret = this.relCursor.getNext(
+                        this.currentKey, this.currentEntry, LockMode.DEFAULT
+                    );
+                    if(this.ret != OperationStatus.SUCCESS) {
+                        break;
+                    }
+                }
+                this.internalList.add((SEntry) unBinding.entryToObject(this.currentEntry));
+            }
+            this.isIntermediate = true;
+        } else {
+            this.isIntermediate = isIntermediate;
+        }
     }
 
     public void setCursor(){
@@ -55,7 +82,6 @@ public class Relation implements Iterator {
         System.out.println("In hasNext");
         try {
             if(this.isIndex) {
-
                 if(this.relCursor == null) {
                     this.setCursor();
                 }
@@ -72,7 +98,6 @@ public class Relation implements Iterator {
                         return false;
                     }
                 }
-
                 return true;
 
             } else if(this.isIntermediate) {
